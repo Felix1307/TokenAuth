@@ -13,7 +13,7 @@ import studio.dreamys.gui.SessionGui;
 
 import java.awt.*;
 
-@Mod(modid = "ta", name = "TokenAuth", version = "1.0")
+@Mod(modid = "ta", name = "TokenAuth", version = "1.1.0")
 public class TokenAuth {
     public static Minecraft mc = Minecraft.getMinecraft();
     public static Session originalSession = mc.session;

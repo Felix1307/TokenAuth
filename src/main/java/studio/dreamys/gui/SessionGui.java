@@ -1,9 +1,5 @@
 package studio.dreamys.gui;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.exceptions.AuthenticationException;
-import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
-import com.mojang.authlib.exceptions.InvalidCredentialsException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -14,7 +10,6 @@ import studio.dreamys.TokenAuth;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.UUID;
 
 public class SessionGui extends GuiScreen {
     private GuiScreen previousScreen;
@@ -66,33 +61,13 @@ public class SessionGui extends GuiScreen {
             try {
                 String[] args = sessionField.getText().split(":");
 
-                String name = args[0];
-                //convert stripped string to uuid
-                UUID uuid = UUID.fromString(args[1].replaceFirst("(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)", "$1-$2-$3-$4-$5"));
-                String token = args[2];
-
-                //check if token is valid
-                try {
-                    mc.getSessionService().joinServer(new GameProfile(uuid, name), token, uuid.toString());
-                } catch (AuthenticationUnavailableException var7) {
-                    status = "§cError: Authentication unavailable";
-                    return;
-                } catch (InvalidCredentialsException var8) {
-                    status = "§cError: Invalid credentials";
-                    return;
-                } catch (AuthenticationException authenticationexception) {
-                    status = "§cError: Authentication failed";
-                    return;
-                }
-
                 //set session and return to previous screen
                 mc.session = new Session(args[0], args[1], args[2], "mojang");
                 mc.displayGuiScreen(previousScreen);
-                return;
 
             //in case we couldn't set session for some reason
             } catch(Exception e) {
-                status = "§cError: Couldn't set session     " + e.getMessage();
+                status = "§cError: Couldn't set session (check mc logs)";
                 e.printStackTrace();
             }
         }
@@ -102,9 +77,9 @@ public class SessionGui extends GuiScreen {
             try {
                 mc.session = TokenAuth.originalSession;
                 mc.displayGuiScreen(previousScreen);
-                return;
             } catch (Exception e) {
-                status = "§cError: Couldn't restore session";
+                status = "§cError: Couldn't restore session (check mc logs)";
+                e.printStackTrace();
             }
         }
 
