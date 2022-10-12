@@ -1,15 +1,20 @@
 package studio.dreamys.gui;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.Session;
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.input.Keyboard;
 import studio.dreamys.TokenAuth;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class SessionGui extends GuiScreen {
     private GuiScreen previousScreen;
@@ -59,12 +64,32 @@ public class SessionGui extends GuiScreen {
         //login button
         if (button.id == 998) {
             try {
-                String[] args = sessionField.getText().split(":");
+                String username, uuid, token, session = sessionField.getText();
+
+                if (session.contains(":")) { //if fully formatted string (ign:uuid:token)
+                    //split string to data
+                    username = session.split(":")[0];
+                    uuid = session.split(":")[1];
+                    token = session.split(":")[2];
+                } else { //if only token
+                    //make request
+                    HttpURLConnection c = (HttpURLConnection) new URL("https://api.minecraftservices.com/minecraft/profile/").openConnection();
+                    c.setRequestProperty("Content-type", "application/json");
+                    c.setRequestProperty("Authorization", "Bearer " + sessionField.getText());
+                    c.setDoOutput(true);
+
+                    //get json
+                    JsonObject json = new JsonParser().parse(IOUtils.toString(c.getInputStream())).getAsJsonObject();
+
+                    //get data
+                    username = json.get("name").getAsString();
+                    uuid = json.get("id").getAsString();
+                    token = session;
+                }
 
                 //set session and return to previous screen
-                mc.session = new Session(args[0], args[1], args[2], "mojang");
+                mc.session = new Session(username, uuid, token, "mojang");
                 mc.displayGuiScreen(previousScreen);
-
             //in case we couldn't set session for some reason
             } catch(Exception e) {
                 status = "§cError: Couldn't set session (check mc logs)";
