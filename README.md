@@ -1,7 +1,7 @@
 <div align="center">
 
 # TokenAuth
-**A simple Minecraft Forge mod that allows logging in to other people's accounts using a username:uuid:token combo.**
+**A simple Minecraft Forge mod that allows logging in to other people's accounts using only a token.**
 
 ![](https://img.shields.io/badge/MC--VERSION-FORGE_1.8.9-0?style=for-the-badge)
 ![](https://img.shields.io/github/downloads/DxxxxY/TokenAuth/total?style=for-the-badge)
@@ -21,7 +21,7 @@ or
 Setup and build yourself using [1.8.9ForgeTemplate#Setup](https://github.com/DxxxxY/1.8.9ForgeTemplate#Setup)'s instructions.
 
 ## Features
-- Login into an account with a username:uuid:token combo.
+- Login into an account with a `token` (or an `ign:uuid:token` formatted string).
 - Restore your session to your original one (at launch time) with the click of a button.
 - Shows the status (user, uuid) next to the gui button in GuiMultiplayer.
 - Works well with [DxxxxY/R.A.T](https://github.com/DxxxxY/R.A.T).
